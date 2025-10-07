@@ -91,7 +91,7 @@
     </dependencies>
 
     <build>
-        <finalName>HealthCare</finalName>
+        <finalName>healthcare</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
