@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.alirostom1</groupId>
-    <artifactId>healthcare</artifactId>
+    <artifactId>heartline</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
@@ -91,7 +91,7 @@
     </dependencies>
 
     <build>
-        <finalName>healthcare</finalName>
+        <finalName>heartline</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
