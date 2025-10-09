@@ -5,4 +5,46 @@
                              https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
 
+    <welcome-file-list>
+        <welcome-file>pages/auth/register.jsp</welcome-file>
+    </welcome-file-list>
+
+    <servlet>
+        <servlet-name>Auth</servlet-name>
+        <servlet-class>io.github.alirostom1.heartline.servlet.AuthServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Auth</servlet-name>
+        <url-pattern>/auth/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Nurse</servlet-name>
+        <servlet-class>io.github.alirostom1.heartline.servlet.NurseServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Nurse</servlet-name>
+        <url-pattern>/nurse/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Generalist</servlet-name>
+        <servlet-class>io.github.alirostom1.heartline.servlet.GeneralistServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Generalist</servlet-name>
+        <url-pattern>/generalist/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- FILTERS FOR AUTH AND ROLE CHECK -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>io.github.alirostom1.heartline.filter.AuthFilter</filter-class>
+    </filter>
+    <!-- FILTER APPLIED TO ALL URLS TEMPORARLY TO BE CHANGED IF NEW COMPLEX AUTH&ROLE CHECKS ARE APPLIED -->
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 </web-app>

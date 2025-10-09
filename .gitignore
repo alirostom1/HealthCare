@@ -37,3 +37,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+.smarttomcat/
+package-lock.json
+node_modules/
+src/main/webapp/assets/css/output.css

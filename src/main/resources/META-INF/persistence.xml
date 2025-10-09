@@ -10,14 +10,14 @@
         <properties>
             <!-- Database connection -->
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/healthcare?useSSL=false"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/healthcare?useSSL=false&amp;allowPublicKeyRetrieval=true"/>
             <property name="jakarta.persistence.jdbc.user" value="healthcare_user"/>
             <property name="jakarta.persistence.jdbc.password" value="healthcare123456789"/>
 
             <!-- Hibernate properties -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/> <!-- update for dev, validate for prod -->
-            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/> <!-- update for dev, validate for prod -->
+            <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>
 
             <!-- Connection pool -->
