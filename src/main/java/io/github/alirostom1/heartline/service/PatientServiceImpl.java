@@ -82,4 +82,9 @@ public class PatientServiceImpl implements PatientService{
     public Patient addVitalSigns(UUID patientId, VitalSigns vitalSigns) {
         return patientRepo.addVitalSigns(patientId,vitalSigns);
     }
+
+    @Override
+    public Optional<Patient> findPatientById(UUID id){
+        return patientRepo.findById(id);
+    }
 }

@@ -20,4 +20,6 @@ public interface PatientService {
     void removeFromQueue(UUID patientId);
 
     Patient addVitalSigns(UUID patientId, VitalSigns vitalSigns);
+
+    Optional<Patient> findPatientById(UUID id);
 }

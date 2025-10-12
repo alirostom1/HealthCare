@@ -77,7 +77,7 @@ public class PatientRepoImpl implements PatientRepo{
     public List<Patient> findAll() {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.createQuery("SELECT p from Patient p",Patient.class).getResultList();
+            return em.createQuery("SELECT p from Patient p ORDER BY p.createdAt DESC",Patient.class).getResultList();
         }finally {
             em.close();
         }
