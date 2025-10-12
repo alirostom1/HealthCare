@@ -36,15 +36,15 @@
         <url-pattern>/generalist/*</url-pattern>
     </servlet-mapping>
 
-<!--    &lt;!&ndash; FILTERS FOR AUTH AND ROLE CHECK &ndash;&gt;-->
-<!--    <filter>-->
-<!--        <filter-name>AuthFilter</filter-name>-->
-<!--        <filter-class>io.github.alirostom1.heartline.filter.AuthFilter</filter-class>-->
-<!--    </filter>-->
-<!--    &lt;!&ndash; FILTER APPLIED TO ALL URLS TEMPORARLY TO BE CHANGED IF NEW COMPLEX AUTH&ROLE CHECKS ARE APPLIED &ndash;&gt;-->
-<!--    <filter-mapping>-->
-<!--        <filter-name>AuthFilter</filter-name>-->
-<!--        <url-pattern>/*</url-pattern>-->
-<!--    </filter-mapping>-->
+    <!-- FILTERS FOR AUTH AND ROLE CHECK -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>io.github.alirostom1.heartline.filter.AuthFilter</filter-class>
+    </filter>
+    <!-- FILTER APPLIED TO ALL URLS TEMPORARLY TO BE CHANGED IF NEW COMPLEX AUTH&ROLE CHECKS ARE APPLIED -->
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 </web-app>
