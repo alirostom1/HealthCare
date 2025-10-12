@@ -11,17 +11,25 @@
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">${success}</div>
     </c:if>
 
-    <!-- Tabs -->
-    <div class="flex space-x-2 mb-6 border-b">
-        <button onclick="showTab('patients')" class="tab-btn px-6 py-3 font-semibold text-blue-600 border-b-2 border-blue-600">Patients</button>
-        <button onclick="showTab('queue')" class="tab-btn px-6 py-3 font-semibold text-gray-600">Queue</button>
-    </div>
+
 
     <!-- PATIENTS TAB -->
     <div id="patients" class="tab-content">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold">Patients List</h2>
-            <button onclick="showModal('addPatient')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">+ Add Patient</button>
+            <div class="flex space-x-2">
+                <form action="${pageContext.request.contextPath}/nurse/search" method="POST" class="flex">
+                    <input type="text" name="ssn" placeholder="Search by SSN..."
+                           class="border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700">
+                        Search
+                    </button>
+                </form>
+                <button onclick="showModal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    + Add Patient
+                </button>
+            </div>
         </div>
 
         <!-- Patients Table -->
@@ -44,10 +52,19 @@
                         <td class="px-4 py-3">${p.birthDate}</td>
                         <td class="px-4 py-3">${p.phoneNumber}</td>
                         <td class="px-4 py-3">
-                            <button onclick="showVitals('${p.id}', '${p.firstName} ${p.lastName}')"
-                                    class="bg-blue-500 text-white px-3 py-1 rounded text-sm mr-1">Vitals</button>
-                            <button onclick="addToQueue('${p.id}')"
-                                    class="bg-purple-600 text-white px-3 py-1 rounded text-sm">Queue</button>
+                            <div class="flex space-x-2">
+                                    <a href="${pageContext.request.contextPath}/nurse/search/${p.ssn}"
+                                        class="flex-1 text-center w-full bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+                                        Profile
+                                    </a>
+                                <form action="${pageContext.request.contextPath}/nurse/queue/add" method="POST" class="flex-1">
+                                    <input type="hidden" name="id" value="${p.id}" />
+                                    <button type="submit"
+                                        class="w-full bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700">
+                                        Queue
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     </c:forEach>
@@ -56,28 +73,6 @@
         </div>
     </div>
 
-    <!-- QUEUE TAB -->
-    <div id="queue" class="tab-content hidden">
-        <h2 class="text-2xl font-bold mb-4">Patient Queue</h2>
-        <div class="bg-white rounded shadow">
-            <ul class="divide-y">
-                <c:forEach items="${queue}" var="q">
-                <li class="px-4 py-3 flex justify-between items-center">
-                    <div>
-                        <span class="font-semibold">${q.patient.firstName} ${q.patient.lastName}</span>
-                        <span class="text-gray-500 text-sm ml-2">${q.patient.ssn}</span>
-                    </div>
-                    <form action="${pageContext.request.contextPath}/nurse/queue/remove" method="post" class="inline">
-                        <input type="hidden" name="patientId" value="${q.patient.id}">
-                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
-                            Remove
-                        </button>
-                    </form>
-                </li>
-                </c:forEach>
-            </ul>
-        </div>
-    </div>
 
 <!-- ADD PATIENT MODAL -->
 <div id="addPatient" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -163,7 +158,7 @@
             </div>
 
             <div class="flex justify-end space-x-3">
-                <button type="button" onclick="hideModal('addPatient')"
+                <button type="button" onclick="hideModal()"
                         class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors">
                     Cancel
                 </button>
@@ -175,73 +170,16 @@
         </form>
     </div>
 </div>
-
-<!-- VITALS MODAL -->
-<div id="vitalsModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
-        <h3 class="text-xl font-bold mb-4">Vital Signs</h3>
-        <div id="vitalsPatientName" class="text-gray-600 mb-4"></div>
-
-        <!-- Add New Vitals Form -->
-        <form action="vitals/add" method="post" class="bg-gray-50 p-4 rounded mb-4">
-            <input type="hidden" name="patientId" id="vitalsPatientId">
-            <h4 class="font-semibold mb-2">Add New Reading</h4>
-            <div class="grid grid-cols-3 gap-2 mb-2">
-                <input type="text" name="bloodPressure" placeholder="BP (120/80)" class="border rounded px-3 py-2" required>
-                <input type="number" name="heartRate" placeholder="HR (bpm)" class="border rounded px-3 py-2" required>
-                <input type="number" step="0.1" name="temperature" placeholder="Temp (°C)" class="border rounded px-3 py-2" required>
-            </div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save Reading</button>
-        </form>
-
-        <button type="button" onclick="hideModal('vitalsModal')" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Close</button>
-    </div>
-</div>
-
 <script>
-    // Tab switching
-    function showTab(tab) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        document.getElementById(tab).classList.remove('hidden');
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
-            btn.classList.add('text-gray-600');
-        });
-        event.target.classList.remove('text-gray-600');
-        event.target.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+    function showModal(){
+         document.getElementById("addPatient").classList.remove('hidden');
+    }
+    function hideModal(){
+        document.getElementById("addPatient").classList.add('hidden');
     }
 
-    // Modal functions
-    function showModal(id) {
-        document.getElementById(id).classList.remove('hidden');
-    }
-    function hideModal(id) {
-        document.getElementById(id).classList.add('hidden');
-    }
 
-    // Show vitals
-    function showVitals(patientId, patientName) {
-        document.getElementById('vitalsPatientId').value = patientId;
-        document.getElementById('vitalsPatientName').textContent = patientName;
-        showModal('vitalsModal');
-    }
-
-    // Add to queue
-    function addToQueue(patientId) {
-        const form = document.createElement('form');
-        form.method = 'post';
-        form.action = '${pageContext.request.contextPath}/nurse/queue/add';
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'patientId';
-        input.value = patientId;
-
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    }
 </script>
+
 </body>
 </html>

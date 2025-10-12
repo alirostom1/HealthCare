@@ -52,8 +52,8 @@ public class AuthFilter implements Filter {
     private String getDashboardPath(User user){
         if(user == null) return "/auth/login";
         switch(user.getRole()){
-            case NURSE: return "/nurse/dashboard";
-            case GENERALIST: return "/generalist/dashboard";
+            case NURSE: return "/nurse/";
+            case GENERALIST: return "/generalist/";
             default: return "/auth/login";
         }
     }

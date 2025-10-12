@@ -42,6 +42,7 @@ public class Patient{
     private String phoneNumber;
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderBy("createdAt DESC")
     private List<VitalSigns> vitalSigns = new ArrayList<>();
 
     @CreationTimestamp

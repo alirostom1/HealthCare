@@ -67,7 +67,7 @@ public class AuthServlet extends HttpServlet{
             HttpSession session = request.getSession();
             session.setAttribute("currentUser",user);
 
-            response.sendRedirect(request.getContextPath() + "/" + user.getRole().toString().toLowerCase() + "/dashboard");
+            response.sendRedirect(request.getContextPath() + "/" + user.getRole().toString().toLowerCase() + "/");
 
         }catch (AuthException e){
             request.setAttribute("error",e.getMessage());
@@ -96,7 +96,7 @@ public class AuthServlet extends HttpServlet{
             HttpSession session = request.getSession();
             session.setAttribute("currentUser",user);
 
-            response.sendRedirect(request.getContextPath() + "/" + role + "/dashboard");
+            response.sendRedirect(request.getContextPath() + "/" + role);
         }catch(RegisterException e){
             request.setAttribute("error",e.getMessage());
             request.getRequestDispatcher("/pages/auth/register.jsp").forward(request,response);
