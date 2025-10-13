@@ -54,4 +54,12 @@ public class Consultation {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+
+    public Consultation(Patient patient,Generalist generalist,String motive,String observations){
+        this.patient = patient;
+        this.generalist = generalist;
+        this.motive = motive;
+        this.observations = observations;
+    }
 }

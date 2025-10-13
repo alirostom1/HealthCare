@@ -33,6 +33,7 @@ public class ConsultationRepoImpl implements ConsultationRepo{
             return savedConsult;
         }catch(Exception e){
             if(tx.isActive()) tx.rollback();
+            e.printStackTrace();
             throw new RuntimeException("Failed to save consultation");
         }finally {
             em.close();
