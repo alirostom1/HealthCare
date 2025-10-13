@@ -1,10 +1,7 @@
 package io.github.alirostom1.heartline.servlet;
 
 import io.github.alirostom1.heartline.config.AppContext;
-import io.github.alirostom1.heartline.repository.PatientRepo;
-import io.github.alirostom1.heartline.repository.PatientRepoImpl;
-import io.github.alirostom1.heartline.repository.UserRepo;
-import io.github.alirostom1.heartline.repository.UserRepoImpl;
+import io.github.alirostom1.heartline.repository.*;
 import io.github.alirostom1.heartline.service.PatientService;
 import io.github.alirostom1.heartline.service.PatientServiceImpl;
 import io.github.alirostom1.heartline.service.UserService;
@@ -26,7 +23,9 @@ public class AppBootstraper implements ServletContextListener{
         UserService userService = new UserServiceImpl(userRepo);
         PatientRepo patientRepo = new PatientRepoImpl(emf);
         PatientService patientService = new PatientServiceImpl(patientRepo);
-        AppContext appContext = new AppContext(emf,userService,patientService);
+        ConsultationRepo consultationRepo = new ConsultationRepoImpl(emf);
+        ConsultationService consultationService = new ConsultationServiceImpl(consultationRepo,patientRepo,userRepo);
+        AppContext appContext = new AppContext(emf,userService,patientService,consultationService);
         ctx.setAttribute("appContext",appContext);
     }
     @Override
