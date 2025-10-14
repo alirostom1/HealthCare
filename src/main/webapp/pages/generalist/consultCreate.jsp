@@ -19,7 +19,7 @@
                        </div>
                        <div class="mb-6">
                            <label class="block text-sm font-medium text-gray-700 mb-1">Observations</label>
-                           <textarea type="text" name="Observations"
+                           <textarea type="text" name="observations"
                                   class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                        </div>
                         <div class="flex justify-end space-x-3">
