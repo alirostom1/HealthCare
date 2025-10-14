@@ -1,6 +1,7 @@
 package io.github.alirostom1.heartline.model.entity;
 
 
+import com.mysql.cj.protocol.ColumnDefinition;
 import io.github.alirostom1.heartline.model.enums.ConsultationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +37,7 @@ public class Consultation {
     private String observations;
     private double cost = 150.00;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "consultation_medical_acts",
         joinColumns = @JoinColumn(name = "consultation_id"),
@@ -48,6 +50,19 @@ public class Consultation {
                 .mapToDouble(MedicalAct::getPrice).sum();
         return this.cost + medicalActsCost;
     }
+    public Long getCountMedicalActs(){
+        Long count = medicalActs.stream().count();
+        return count;
+    }
+    public double getMedicalActsCost(){
+        return medicalActs.stream().mapToDouble(MedicalAct::getPrice).sum();
+    }
+
+    @Column(columnDefinition = "TEXT")
+    private String diagnosis;
+
+    @Column(columnDefinition = "TEXT")
+    private String treatment;
 
     @Enumerated(EnumType.STRING)
     private ConsultationStatus status = ConsultationStatus.OPEN;
@@ -55,6 +70,9 @@ public class Consultation {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    public String getFormattedCreatedAt(){
+        return createdAt != null ? createdAt.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "";
+    }
 
     public Consultation(Patient patient,Generalist generalist,String motive,String observations){
         this.patient = patient;

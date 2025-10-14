@@ -1,14 +1,14 @@
 package io.github.alirostom1.heartline.repository;
 
-import io.github.alirostom1.heartline.model.entity.Consultation;
-import io.github.alirostom1.heartline.model.entity.Generalist;
-import io.github.alirostom1.heartline.model.entity.Patient;
-import io.github.alirostom1.heartline.model.entity.User;
+import io.github.alirostom1.heartline.model.entity.*;
+import io.github.alirostom1.heartline.model.enums.ConsultationStatus;
 import io.github.alirostom1.heartline.model.enums.ERole;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ConsultationServiceImpl implements ConsultationService{
     private final ConsultationRepo consultRepo;
@@ -45,4 +45,69 @@ public class ConsultationServiceImpl implements ConsultationService{
             throw e;
         }
     }
+    @Override
+    public List<Consultation> getAllConsultations(){
+        return consultRepo.findAll();
+    }
+    @Override
+    public Optional<Consultation> getConsultationById(UUID id){
+        return consultRepo.findById(id);
+    }
+
+    @Override
+    public List<MedicalAct> getAllMedicalActs() {
+        return consultRepo.getAllMedicalActs();
+    }
+
+    @Override
+    public List<MedicalAct> getAllAvailableMedicalActs(UUID consultationId) {
+        Optional<Consultation> optionalConsultation = consultRepo.findById(consultationId);
+        if(optionalConsultation.isPresent()){
+            List<MedicalAct> allMedicalActs = consultRepo.getAllMedicalActs();
+            List<MedicalAct> existingMedicalActs = optionalConsultation.get().getMedicalActs();
+            return allMedicalActs.stream().filter(ma -> !existingMedicalActs.contains(ma)).collect(Collectors.toList());
+        }
+        return consultRepo.getAllMedicalActs();
+    }
+    @Override
+    public Consultation addMedicalAct(UUID consultationId,UUID medicalActId){
+        return consultRepo.addMedicalAct(consultationId,medicalActId);
+    }
+    @Override
+    public Consultation removeMedicalAct(UUID consultationId,UUID medicalActID){
+        return consultRepo.removeMedicalAct(consultationId,medicalActID);
+    }
+    @Override
+    public Consultation updateStatus(UUID consultationId, ConsultationStatus status){
+        Optional<Consultation> optConsultation = consultRepo.findById(consultationId);
+        if(optConsultation.isEmpty()){
+            throw new IllegalArgumentException("Consultation not found with id : " + consultationId);
+        }
+        Consultation consultation = optConsultation.get();
+        consultation.setStatus(status);
+        return consultRepo.save(consultation);
+    }
+    @Override
+    public Consultation updateDiagnosis(UUID consultationId,String diagnosis){
+        Optional<Consultation> optionalConsultation = consultRepo.findById(consultationId);
+        if(optionalConsultation.isEmpty()){
+            throw new RuntimeException("Consultation not found with id: " + consultationId);
+        }
+        Consultation consultation = optionalConsultation.get();
+        consultation.setDiagnosis(diagnosis);
+        return consultRepo.save(consultation);
+    }
+    @Override
+    public Consultation updateTreatment(UUID consultationId,String treatment){
+        Optional<Consultation> optionalConsultation = consultRepo.findById(consultationId);
+        if(optionalConsultation.isEmpty()){
+            throw new RuntimeException("Consultation not found with id: " + consultationId);
+        }
+        Consultation consultation = optionalConsultation.get();
+        consultation.setTreatment(treatment);
+        return consultRepo.save(consultation);
+    }
+
+
+
 }

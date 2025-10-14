@@ -48,7 +48,6 @@ public class UserServiceImpl implements UserService{
         validateRegistration(username,email);
         String hashedPw = BCrypt.hashpw(password,BCrypt.gensalt());
         Generalist generalist = new Generalist(fullName,username,email,hashedPw);
-        System.out.println("hi");
         return userRepo.save(generalist);
     }
 

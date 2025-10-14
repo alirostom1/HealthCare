@@ -7,7 +7,7 @@
                class="hover:text-gray-200 font-medium transition">
                 Dashboard
             </a>
-            <a href="${pageContext.request.contextPath}/nurse/consultations"
+            <a href="${pageContext.request.contextPath}/generalist/consultations"
                class="hover:text-gray-200 font-medium transition">
                 consultations
             </a>

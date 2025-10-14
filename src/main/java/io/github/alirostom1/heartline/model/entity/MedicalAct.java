@@ -23,4 +23,9 @@ public class MedicalAct {
 
     @Column(nullable = false)
     private double price;
+
+    public MedicalAct(String name,double price){
+        this.name = name;
+        this.price = price;
+    }
 }

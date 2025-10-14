@@ -4,8 +4,10 @@ import io.github.alirostom1.heartline.config.AppContext;
 import io.github.alirostom1.heartline.model.entity.Consultation;
 import io.github.alirostom1.heartline.model.entity.Generalist;
 import io.github.alirostom1.heartline.model.entity.Patient;
+import io.github.alirostom1.heartline.model.enums.ConsultationStatus;
 import io.github.alirostom1.heartline.repository.ConsultationService;
 import io.github.alirostom1.heartline.service.PatientService;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,8 +36,16 @@ public class GeneralistServlet extends HttpServlet {
             case "/consultation/create":
                 createConsultation(request,response);
                 break;
+            case "/consultations":
+                showConsultations(request,response);
+                break;
             default:
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                if(action.startsWith("/consultation/")){
+                    String id = action.substring(14);
+                    showConsultation(request,response,id);
+                }else{
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
                 break;
         }
     }
@@ -46,6 +56,21 @@ public class GeneralistServlet extends HttpServlet {
         switch (action){
             case "/consultation/create":
                 registerConsultation(request,response);
+                break;
+            case "/consultation/medical-act/add":
+                addMedicalAct(request,response);
+                break;
+            case "/consultation/medical-act/remove":
+                removeMedicalAct(request,response);
+                break;
+            case "/consultation/update-status":
+                updateStatus(request,response);
+                break;
+            case "/consultation/update-diagnosis":
+                updateDiagnosis(request,response);
+                break;
+            case "/consultation/update-treatment":
+                updateTreatment(request,response);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -99,4 +124,102 @@ public class GeneralistServlet extends HttpServlet {
         }
         response.sendRedirect(request.getContextPath() + "/generalist/");
     }
+    public void showConsultations(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        request.setAttribute("consultations",consultationService.getAllConsultations());
+        request.getRequestDispatcher("/pages/generalist/consultations.jsp").forward(request,response);
+    }
+    public void showConsultation(HttpServletRequest request,HttpServletResponse response,String id)
+            throws IOException,ServletException{
+        notificationMessages(request);
+        UUID consultationId = UUID.fromString(id);
+        Optional<Consultation> optConsultation = consultationService.getConsultationById(consultationId);
+        if(optConsultation.isEmpty()){
+            request.setAttribute("error","Consultation not found with id: " + id);
+        }else{
+            request.setAttribute("availableMedicalActs",consultationService.getAllAvailableMedicalActs(consultationId));
+            request.setAttribute("consultation",optConsultation.get());
+        }
+        request.getRequestDispatcher("/pages/generalist/consultation.jsp").forward(request,response);
+    }
+
+    public void addMedicalAct(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        String medicalActId = request.getParameter("medicalActId");
+        String consultationId = request.getParameter("consultationId");
+        try {
+            if(consultationId != null && medicalActId != null &&
+                    !consultationId.trim().isEmpty() && !medicalActId.trim().isEmpty()){
+                UUID medicalActUuid = UUID.fromString(medicalActId);
+                UUID consultationUuid = UUID.fromString(consultationId);
+                consultationService.addMedicalAct(consultationUuid,medicalActUuid);
+                request.getSession().setAttribute("success","Successfully added medical act!");
+                response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+            }else{
+                request.getSession().setAttribute("error","Failed to add medical act to consultation!");
+                response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+            }
+        }catch(Exception e){
+            request.getSession().setAttribute("error",e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }
+    }
+    public void removeMedicalAct(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        String medicalActId = request.getParameter("medicalActId");
+        String consultationId = request.getParameter("consultationId");
+        try{
+            UUID medicalActUuid = UUID.fromString(medicalActId);
+            UUID consultationUuid = UUID.fromString(consultationId);
+            consultationService.removeMedicalAct(consultationUuid,medicalActUuid);
+            request.getSession().setAttribute("success","Successfully removed medical act !");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }catch (Exception e){
+            request.getSession().setAttribute("error",e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }
+    }
+    public void updateStatus(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        String consultationId = request.getParameter("consultationId");
+        String  status = request.getParameter("status");
+        try{
+            UUID consultationUuid = UUID.fromString(consultationId);
+            ConsultationStatus consultationStatus = ConsultationStatus.valueOf(status);
+            consultationService.updateStatus(consultationUuid,consultationStatus);
+            request.getSession().setAttribute("success","Successfully updated status to " + status + " !");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }catch (Exception e){
+            request.getSession().setAttribute("error",e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }
+    }
+    public void updateDiagnosis(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        String consultationId = request.getParameter("consultationId");
+        try{
+            UUID consultationUuid = UUID.fromString(consultationId);
+            consultationService.updateDiagnosis(consultationUuid,request.getParameter("diagnosis"));
+            request.getSession().setAttribute("success","Successfully updated consultation diagnosis !");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }catch (Exception e){
+            request.getSession().setAttribute("error","Failed to update consultation diagnosis");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+
+        }
+    }
+    public void updateTreatment(HttpServletRequest request,HttpServletResponse response)
+        throws IOException,ServletException{
+        String consultationId = request.getParameter("consultationId");
+        try{
+            UUID consultationUuid = UUID.fromString(consultationId);
+            consultationService.updateTreatment(consultationUuid,request.getParameter("treatment"));
+            request.getSession().setAttribute("success","Successfully updated consultation treatment !");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }catch (Exception e){
+            request.getSession().setAttribute("error","Failed to update consultation treatment");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }
+    }
+
 }
