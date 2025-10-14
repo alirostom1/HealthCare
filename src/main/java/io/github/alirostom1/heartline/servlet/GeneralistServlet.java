@@ -5,7 +5,7 @@ import io.github.alirostom1.heartline.model.entity.Consultation;
 import io.github.alirostom1.heartline.model.entity.Generalist;
 import io.github.alirostom1.heartline.model.entity.Patient;
 import io.github.alirostom1.heartline.model.enums.ConsultationStatus;
-import io.github.alirostom1.heartline.repository.ConsultationService;
+import io.github.alirostom1.heartline.service.ConsultationService;
 import io.github.alirostom1.heartline.service.PatientService;
 
 import jakarta.servlet.ServletException;
