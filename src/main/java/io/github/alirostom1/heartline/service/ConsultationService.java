@@ -1,4 +1,4 @@
-package io.github.alirostom1.heartline.repository;
+package io.github.alirostom1.heartline.service;
 
 import io.github.alirostom1.heartline.model.entity.Consultation;
 import io.github.alirostom1.heartline.model.entity.MedicalAct;

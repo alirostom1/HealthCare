@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Entity
@@ -47,6 +48,10 @@ public abstract class User {
     @UpdateTimestamp
     @Column(name ="updated_at")
     private LocalDateTime updatedAt;
+
+    public String getFormattedCreatedAt(){
+        return createdAt != null ? createdAt.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "";
+    }
 
 
     protected User(String fullName, String username, String email, String password, ERole role) {

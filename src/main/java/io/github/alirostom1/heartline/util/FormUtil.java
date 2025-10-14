@@ -10,7 +10,7 @@ public class FormUtil {
 
     public static Double getDoubleParam(HttpServletRequest request, String param) {
         String value = request.getParameter(param);
-        return (value != null && !value.trim().isEmpty()) ? Double.parseDouble(value.trim()) : null;
+        return (value != null && !value.trim().isEmpty()) ? Double.parseDouble(value.trim()) : 0.0;
     }
 
     public static String getStringParam(HttpServletRequest request, String param) {

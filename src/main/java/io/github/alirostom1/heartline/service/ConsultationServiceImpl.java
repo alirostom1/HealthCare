@@ -1,16 +1,18 @@
-package io.github.alirostom1.heartline.repository;
+package io.github.alirostom1.heartline.service;
 
 import io.github.alirostom1.heartline.model.entity.*;
 import io.github.alirostom1.heartline.model.enums.ConsultationStatus;
 import io.github.alirostom1.heartline.model.enums.ERole;
+import io.github.alirostom1.heartline.repository.ConsultationRepo;
+import io.github.alirostom1.heartline.repository.PatientRepo;
+import io.github.alirostom1.heartline.repository.UserRepo;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ConsultationServiceImpl implements ConsultationService{
+public class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationRepo consultRepo;
     private final PatientRepo patientRepo;
     private final UserRepo userRepo;

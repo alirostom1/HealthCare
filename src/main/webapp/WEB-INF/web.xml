@@ -35,6 +35,14 @@
         <servlet-name>Generalist</servlet-name>
         <url-pattern>/generalist/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>Specialist</servlet-name>
+        <servlet-class>io.github.alirostom1.heartline.servlet.SpecialistServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Specialist</servlet-name>
+        <url-pattern>/specialist/*</url-pattern>
+    </servlet-mapping>
 
     <!-- FILTERS FOR AUTH AND ROLE CHECK -->
     <filter>

@@ -54,13 +54,15 @@ public class AuthFilter implements Filter {
         switch(user.getRole()){
             case NURSE: return "/nurse/";
             case GENERALIST: return "/generalist/";
+            case SPECIALIST: return "/specialist/";
             default: return "/auth/login";
         }
     }
     private boolean hasAccess(User user,String path){
         if(user == null) return false;
-        if(path.startsWith("/nurse/") && user.getRole() == ERole.NURSE) return true;
-        if(path.startsWith("/generalist/") && user.getRole() == ERole.GENERALIST) return true;
+        if(path.startsWith("/nurse") && user.getRole() == ERole.NURSE) return true;
+        if(path.startsWith("/generalist") && user.getRole() == ERole.GENERALIST) return true;
+        if(path.startsWith("/specialist") && user.getRole() == ERole.SPECIALIST) return true;
         return false;
     }
 

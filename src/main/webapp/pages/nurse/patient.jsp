@@ -227,6 +227,11 @@
     function hideModal(id) {
       document.getElementById(id).classList.add('hidden');
     }
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.classList.add('hidden');
+        }
+    });
   </script>
   </c:if>
 

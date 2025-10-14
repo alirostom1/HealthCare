@@ -1,6 +1,6 @@
 package io.github.alirostom1.heartline.config;
 
-import io.github.alirostom1.heartline.repository.ConsultationService;
+import io.github.alirostom1.heartline.service.ConsultationService;
 import io.github.alirostom1.heartline.service.PatientService;
 import io.github.alirostom1.heartline.service.UserService;
 import jakarta.persistence.EntityManagerFactory;

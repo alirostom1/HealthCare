@@ -5,7 +5,7 @@
         <div class="flex space-x-6">
             <a href="${pageContext.request.contextPath}/generalist/"
                class="hover:text-gray-200 font-medium transition">
-                Dashboard
+                Queue
             </a>
             <a href="${pageContext.request.contextPath}/generalist/consultations"
                class="hover:text-gray-200 font-medium transition">
