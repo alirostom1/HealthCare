@@ -164,9 +164,12 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="text-center py-8 text-gray-500">
-                            <p>No diagnosis recorded yet</p>
-                        </div>
+                    <div class="text-center py-8 text-gray-500">
+                        <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="mt-2">No diagnosis recorded yet</p>
+                    </div>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -185,9 +188,12 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="text-center py-8 text-gray-500">
-                            <p>No treatment plan recorded yet</p>
-                        </div>
+                    <div class="text-center py-8 text-gray-500">
+                        <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="mt-2">No treatment plan recorded yet</p>
+                    </div>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -197,7 +203,8 @@
                   </div>
 
                   <!-- Latest Vitals Summary -->
-                  <c:if test="${not empty consultation.patient.vitalSigns and not empty consultation.patient.vitalSigns[0]}">
+                  <c:choose>
+                  <c:when test="${not empty consultation.patient.vitalSigns and not empty consultation.patient.vitalSigns[0]}">
                   <c:set var="latestVitals" value="${consultation.patient.vitalSigns[0]}" />
                   <div class="bg-blue-50 rounded-lg p-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
@@ -217,7 +224,6 @@
                       <p class="font-bold text-xl text-blue-700">${latestVitals.respiratoryRate} bpm</p>
                     </div>
                   </div>
-                  </c:if>
 
                   <!-- Vitals History Table -->
                   <div class="overflow-x-auto">
@@ -248,6 +254,16 @@
                       </tbody>
                     </table>
                   </div>
+                  </c:when>
+                  <c:otherwise>
+                  <div class="text-center py-8 text-gray-500">
+                        <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="mt-2">No vital signs recorded yet</p>
+                    </div>
+                  </c:otherwise>
+                  </c:choose>
                 </div>
         </div>
 
