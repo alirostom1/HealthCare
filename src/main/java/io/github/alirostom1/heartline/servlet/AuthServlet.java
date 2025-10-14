@@ -90,13 +90,16 @@ public class AuthServlet extends HttpServlet{
                 case "generalist":
                     user = userService.registerGeneralist(fullName,username,email,password);
                     break;
+                case "specialist":
+                    user = userService.registerSpecialist(fullName,username,email,password);
+                    break;
                 default:
                     throw new RegisterException("Invalid role");
             }
             HttpSession session = request.getSession();
             session.setAttribute("currentUser",user);
 
-            response.sendRedirect(request.getContextPath() + "/" + role);
+            response.sendRedirect(request.getContextPath() + "/" + role + "/");
         }catch(RegisterException e){
             request.setAttribute("error",e.getMessage());
             request.getRequestDispatcher("/pages/auth/register.jsp").forward(request,response);

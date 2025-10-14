@@ -25,7 +25,7 @@ public class UserRepoImpl implements UserRepo{
         try{
             tx.begin();
             User savedUser;
-            if(user.getId() != null){
+            if(user.getId() == null){
                 em.persist(user);
                 savedUser = user;
             }else{
@@ -36,7 +36,7 @@ public class UserRepoImpl implements UserRepo{
 
         } catch (Exception e) {
             if(tx.isActive()) tx.rollback();
-            throw new RuntimeException("Failed to create user",e);
+            throw new RuntimeException("Failed to save user",e);
         }finally {
             em.close();
         }

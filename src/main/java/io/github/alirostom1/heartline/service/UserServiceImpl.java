@@ -4,13 +4,16 @@ import io.github.alirostom1.heartline.exception.AuthException;
 import io.github.alirostom1.heartline.exception.RegisterException;
 import io.github.alirostom1.heartline.model.entity.Generalist;
 import io.github.alirostom1.heartline.model.entity.Nurse;
+import io.github.alirostom1.heartline.model.entity.Specialist;
 import io.github.alirostom1.heartline.model.entity.User;
 import io.github.alirostom1.heartline.model.enums.ERole;
+import io.github.alirostom1.heartline.model.enums.Specialty;
 import io.github.alirostom1.heartline.repository.UserRepo;
 import jakarta.servlet.http.HttpSession;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class UserServiceImpl implements UserService{
     private final UserRepo userRepo;
@@ -52,6 +55,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public User registerSpecialist(String fullName, String username, String email, String password) throws RegisterException {
+        validateRegistration(username,email);
+        String hashedPw = BCrypt.hashpw(password,BCrypt.gensalt());
+        Specialist specialist = new Specialist(fullName,username,email,hashedPw);
+        return userRepo.save(specialist);
+    }
+
+    @Override
     public boolean isUsernameAvailable(String username) {
         return !userRepo.existsByUsername(username);
     }
@@ -85,4 +96,21 @@ public class UserServiceImpl implements UserService{
             throw new RegisterException("Email already exists");
         }
     }
+    @Override
+    public Optional<User> findById(UUID userId){
+        return userRepo.findById(userId);
+    }
+
+    @Override
+    public Specialist updateSpecialist(UUID userId, Specialty specialty, double fee){
+        Optional<User> user =  userRepo.findById(userId);
+        if(user.isEmpty()){
+            throw new IllegalArgumentException("Invalid User id!");
+        }
+        Specialist specialist = (Specialist) user.get();
+        specialist.setSpecialty(specialty);
+        specialist.setFee(fee);
+        return (Specialist)userRepo.save(specialist);
+    }
+
 }
