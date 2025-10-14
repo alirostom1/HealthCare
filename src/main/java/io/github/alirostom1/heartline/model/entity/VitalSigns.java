@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Entity
@@ -43,6 +44,10 @@ public class VitalSigns {
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public String getFormattedCreatedAt(){
+        return createdAt != null ? createdAt.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "";
+    }
 
     public VitalSigns(Patient patient, String bloodPressure, Integer heartRate,
                       Double bodyTemperature, Integer respiratoryRate, Double weight, Double height) {
