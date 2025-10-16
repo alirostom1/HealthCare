@@ -8,6 +8,10 @@
            class="hover:text-gray-200 font-medium transition">
             Profile
         </a>
+        <a id="timeSlotsLink" href="${pageContext.request.contextPath}/specialist/time-slots"
+           class="hover:text-gray-200 font-medium transition">
+            Time Slots
+        </a>
 
     </div>
 
@@ -19,3 +23,9 @@
         </button>
     </form>
 </nav>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('timeSlotsLink').href += "?date=" + today;
+});
+</script>
