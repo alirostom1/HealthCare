@@ -1,7 +1,7 @@
-package io.github.alirostom1.heartline.servlet;
+package io.github.alirostom1.heartline.config;
 
-import io.github.alirostom1.heartline.config.AppContext;
-import io.github.alirostom1.heartline.model.entity.MedicalAct;
+import io.github.alirostom1.heartline.job.GenerateWeeklyTimeSlots;
+import io.github.alirostom1.heartline.model.entity.*;
 import io.github.alirostom1.heartline.repository.*;
 import io.github.alirostom1.heartline.service.*;
 import jakarta.persistence.EntityManager;
@@ -12,12 +12,24 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.Time;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @WebListener
 public class AppBootstraper implements ServletContextListener{
+    private ScheduledExecutorService scheduler;
+
     @Override
     public void contextInitialized(ServletContextEvent sce){
         ServletContext ctx = sce.getServletContext();
@@ -28,8 +40,17 @@ public class AppBootstraper implements ServletContextListener{
         PatientService patientService = new PatientServiceImpl(patientRepo);
         ConsultationRepo consultationRepo = new ConsultationRepoImpl(emf);
         ConsultationService consultationService = new ConsultationServiceImpl(consultationRepo,patientRepo,userRepo);
-        AppContext appContext = new AppContext(emf,userService,patientService,consultationService);
+        SpecialistRepo specialistRepo = new SpecialistRepoImpl(emf);
+        SpecialistService specialistService = new SpecialistServiceImpl(specialistRepo);
+        TimeSlotRepo timeSlotRepo = new TimeSlotRepoImpl(emf);
+        TimeSlotService timeSlotService = new TimeSlotServiceImpl(timeSlotRepo);
+        AppContext appContext = new AppContext(emf,userService,patientService,consultationService,specialistService);
         ctx.setAttribute("appContext",appContext);
+
+
+        GenerateWeeklyTimeSlots job1 = new GenerateWeeklyTimeSlots(timeSlotService,specialistService);
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(job1,0,7, TimeUnit.DAYS);
 
     }
     @Override
@@ -54,4 +75,5 @@ public class AppBootstraper implements ServletContextListener{
         tx.commit();
         em.close();
     }
+
 }

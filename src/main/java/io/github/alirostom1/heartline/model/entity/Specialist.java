@@ -27,6 +27,7 @@ public class Specialist extends User{
     private int duration = 30;
 
     @OneToMany(mappedBy = "specialist",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OrderBy("startTime desc")
     private List<TimeSlot> timeSlots = new ArrayList<>();
 
     public Specialist(){

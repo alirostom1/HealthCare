@@ -2,8 +2,11 @@ package io.github.alirostom1.heartline.servlet;
 
 import io.github.alirostom1.heartline.config.AppContext;
 import io.github.alirostom1.heartline.model.entity.Specialist;
+import io.github.alirostom1.heartline.model.entity.TimeSlot;
 import io.github.alirostom1.heartline.model.entity.User;
 import io.github.alirostom1.heartline.model.enums.Specialty;
+import io.github.alirostom1.heartline.service.SpecialistService;
+import io.github.alirostom1.heartline.service.SpecialistServiceImpl;
 import io.github.alirostom1.heartline.service.UserService;
 import io.github.alirostom1.heartline.util.FormUtil;
 import jakarta.servlet.ServletException;
@@ -12,15 +15,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.UUID;
 
 public class SpecialistServlet extends HttpServlet {
     private UserService userService;
+    private SpecialistService specialistService;
 
     @Override
     public void init(){
         AppContext appContext = (AppContext) getServletContext().getAttribute("appContext");
         this.userService = appContext.getUserService();
+        this.specialistService = appContext.getSpecialistService();
     }
 
     @Override
@@ -30,6 +39,9 @@ public class SpecialistServlet extends HttpServlet {
         switch(action){
             case "/":
                 showProfile(request,response);
+                break;
+            case "/time-slots":
+                showTimeSlots(request,response);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -90,6 +102,27 @@ public class SpecialistServlet extends HttpServlet {
         if(error != null){
             request.setAttribute("error",error);
             request.getSession().removeAttribute("error");
+        }
+    }
+    private void showTimeSlots(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException {
+        String inputDate = request.getParameter("date");
+        User user = (User) request.getSession().getAttribute("currentUser");
+        try {
+            Specialist specialist = (Specialist) userService.findById(user.getId()).get();
+            LocalDate date = LocalDate.parse(inputDate);
+            List<TimeSlot> timeSlots = specialistService.getTimeSlotsByDate(specialist, date);
+            request.setAttribute("timeSlots", timeSlots);
+            request.getRequestDispatcher("/pages/specialist/time-slots.jsp").forward(request, response);
+        }catch(NullPointerException e){
+            request.setAttribute("error","Date input must exist!");
+            request.getRequestDispatcher("/pages/specialist/time-slots.jsp").forward(request,response);
+        }catch(DateTimeParseException e){
+            request.setAttribute("error","Invalid date format");
+            request.getRequestDispatcher("/pages/specialist/time-slots.jsp").forward(request,response);
+        }catch(Exception e){
+            request.setAttribute("error",e.getMessage());
+            request.getRequestDispatcher("/pages/specialist/time-slots.jsp").forward(request,response);
         }
     }
 }

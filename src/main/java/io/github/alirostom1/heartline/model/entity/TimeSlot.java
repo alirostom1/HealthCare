@@ -3,14 +3,19 @@ package io.github.alirostom1.heartline.model.entity;
 
 import io.github.alirostom1.heartline.model.enums.TSstatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "time_slots")
+@AllArgsConstructor
+@NoArgsConstructor
 public class TimeSlot{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -20,11 +25,20 @@ public class TimeSlot{
     @JoinColumn(name = "specialist_id",nullable = false)
     private Specialist specialist;
 
+    @JoinColumn(nullable = false)
     private LocalDateTime startTime;
+    @JoinColumn(nullable = false)
     private LocalDateTime endTime;
 
+    public String getFormattedStartTime(){
+        return this.startTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+    public String getFormattedEndTime(){
+        return this.endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
     @Enumerated(EnumType.STRING)
-    private TSstatus status;
+    private TSstatus status = TSstatus.AVAILABLE;
 
     public boolean isAvailable(){
         return status == TSstatus.AVAILABLE && startTime.isAfter(LocalDateTime.now());
@@ -33,4 +47,9 @@ public class TimeSlot{
         return endTime.isBefore(LocalDateTime.now());
     }
 
+    public TimeSlot(Specialist specialist,LocalDateTime startTime,LocalDateTime endTime){
+        this.specialist = specialist;
+        this.startTime=startTime;
+        this.endTime = endTime;
+    }
 }
