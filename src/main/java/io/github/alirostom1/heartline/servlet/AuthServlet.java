@@ -86,6 +86,7 @@ public class AuthServlet extends HttpServlet{
             switch (role){
                 case "nurse":
                     user = userService.registerNurse(fullName,username,email,password);
+                    System.out.println(user);
                     break;
                 case "generalist":
                     user = userService.registerGeneralist(fullName,username,email,password);
