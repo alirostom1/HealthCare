@@ -109,6 +109,10 @@ public class ConsultationServiceImpl implements ConsultationService {
         consultation.setTreatment(treatment);
         return consultRepo.save(consultation);
     }
+    @Override
+    public List<Consultation> getConsultationsGeneralistId(UUID generalistId){
+        return getAllConsultations().stream().filter(c -> c.getGeneralist().getId().equals(generalistId)).collect(Collectors.toList());
+    }
 
 
 

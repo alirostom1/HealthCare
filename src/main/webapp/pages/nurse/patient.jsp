@@ -132,7 +132,9 @@
     <div class="bg-white rounded-lg p-6 w-full max-w-md">
       <h3 class="text-xl font-bold mb-4">Edit Patient Information</h3>
       <form action="${pageContext.request.contextPath}/nurse/patient/update" method="post">
-        <input type="hidden" name="patientId" value="${patient.id}">
+
+          <input type="hidden" name="csrfToken" value="${csrfToken}">
+          <input type="hidden" name="patientId" value="${patient.id}">
 
         <label class="block mb-2">
           <span class="text-gray-700">First Name</span>
@@ -172,7 +174,8 @@
     <div class="bg-white rounded-lg p-6 w-full max-w-lg">
       <h3 class="text-xl font-bold mb-4">Add New Vital Signs Reading</h3>
       <form action="${pageContext.request.contextPath}/nurse/patient/vitals/add" method="post">
-        <input type="hidden" name="id" value="${patient.id}">
+          <input type="hidden" name="csrfToken" value="${csrfToken}">
+          <input type="hidden" name="id" value="${patient.id}">
         <input type="hidden" name="ssn" value="${patient.ssn}">
 
         <div class="grid grid-cols-2 gap-4 mb-3">

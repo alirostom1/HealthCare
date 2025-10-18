@@ -10,6 +10,7 @@
                <div class="bg-white border rounded-lg p-6 w-full max-w-2xl max-h-[90%] overflow-y-auto">
                    <h3 class="text-xl font-bold mb-4">Create Consultation For SSN : ${patient.ssn}</h3>
                    <form action="${pageContext.request.contextPath}/generalist/consultation/create?id=${param.patientId}" method="post">
+                       <input type="hidden" name="csrfToken" value="${csrfToken}">
 
                        <!-- Personal Information -->
                        <div class="mb-6">

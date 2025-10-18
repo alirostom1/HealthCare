@@ -11,7 +11,8 @@
     </c:if>
 
     <form action="${pageContext.request.contextPath}/auth/register" method="POST" class="space-y-4">
-      <select name="role" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400" required>
+        <input type="hidden" name="csrfToken" value="${csrfToken}">
+        <select name="role" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400" required>
         <option value="">Select Role</option>
         <option value="nurse">Nurse</option>
         <option value="generalist">Generalist Doctor</option>

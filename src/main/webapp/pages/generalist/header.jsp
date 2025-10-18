@@ -14,6 +14,7 @@
         </div>
 
     <form action="${pageContext.request.contextPath}/auth/logout" method="post">
-      <button type="submit" class="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-100">Logout</button>
+        <input type="hidden" name="csrfToken" value="${csrfToken}">
+        <button type="submit" class="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-100">Logout</button>
     </form>
 </nav>

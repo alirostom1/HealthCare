@@ -19,6 +19,7 @@
             <h2 class="text-2xl font-bold">Patients List</h2>
             <div class="flex space-x-2">
                 <form action="${pageContext.request.contextPath}/nurse/search" method="POST" class="flex">
+                    <input type="hidden" name="csrfToken" value="${csrfToken}">
                     <input type="text" name="ssn" placeholder="Search by SSN..."
                            class="border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
                     <button type="submit"
@@ -58,6 +59,7 @@
                                         Profile
                                     </a>
                                 <form action="${pageContext.request.contextPath}/nurse/queue/add" method="POST" class="flex-1">
+                                    <input type="hidden" name="csrfToken" value="${csrfToken}">
                                     <input type="hidden" name="id" value="${p.id}" />
                                     <button type="submit"
                                         class="w-full bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700">
@@ -79,6 +81,7 @@
     <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90%] overflow-y-auto">
         <h3 class="text-xl font-bold mb-4">Register New Patient</h3>
         <form action="${pageContext.request.contextPath}/nurse/patient/register" method="post">
+            <input type="hidden" name="csrfToken" value="${csrfToken}">
 
             <!-- Personal Information -->
             <div class="grid grid-cols-2 gap-4 mb-4">

@@ -2,6 +2,7 @@ package io.github.alirostom1.heartline.repository;
 
 import io.github.alirostom1.heartline.model.entity.Consultation;
 import io.github.alirostom1.heartline.model.entity.MedicalAct;
+import io.github.alirostom1.heartline.model.enums.ConsultationStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -28,6 +29,9 @@ public class ConsultationRepoImpl implements ConsultationRepo{
                 em.persist(consultation);
                 savedConsult = consultation;
             }else{
+                if(consultation.getDiagnosis() != null && consultation.getTreatment() != null){
+                    consultation.setStatus(ConsultationStatus.COMPLETED);
+                }
                 savedConsult = em.merge(consultation);
             }
             tx.commit();
