@@ -42,3 +42,5 @@ build/
 package-lock.json
 node_modules/
 src/main/webapp/assets/css/output.css
+
+.idea
