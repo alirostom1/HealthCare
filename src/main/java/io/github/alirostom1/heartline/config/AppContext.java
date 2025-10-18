@@ -1,9 +1,6 @@
 package io.github.alirostom1.heartline.config;
 
-import io.github.alirostom1.heartline.service.ConsultationService;
-import io.github.alirostom1.heartline.service.PatientService;
-import io.github.alirostom1.heartline.service.SpecialistService;
-import io.github.alirostom1.heartline.service.UserService;
+import io.github.alirostom1.heartline.service.*;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +13,8 @@ public class AppContext {
     private final PatientService patientService;
     private final ConsultationService consultationService;
     private final SpecialistService specialistService;
+    private final RequestService requestService;
+    private final TimeSlotService timeSlotService;
 
 
     public void close(){
