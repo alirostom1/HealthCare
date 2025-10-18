@@ -12,6 +12,7 @@ public interface ConsultationService {
     Consultation createConsultation(UUID patientId, UUID generalistId, String motive, String observations);
 
     List<Consultation> getAllConsultations();
+    List<Consultation> getConsultationsGeneralistId(UUID generalistId);
 
     Optional<Consultation> getConsultationById(UUID id);
 

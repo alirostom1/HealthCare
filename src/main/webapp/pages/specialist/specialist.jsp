@@ -66,6 +66,7 @@
     <div class="bg-white rounded-lg p-6 w-full max-w-md">
       <h3 class="text-xl font-bold mb-4">Edit specialist profile</h3>
       <form action="${pageContext.request.contextPath}/specialist/update" method="post">
+          <input type="hidden" name="csrfToken" value="${csrfToken}">
         <input type="hidden" name="specialistId" value="${specialist.id}">
 
         <label class="block mb-2">
@@ -94,6 +95,7 @@
       <div class="bg-white rounded-lg p-6 w-full max-w-md">
         <h3 class="text-xl font-bold mb-4">Choose Date to view time slots</h3>
         <form action="${pageContext.request.contextPath}/specialist/time-slots" method="get">
+            <input type="hidden" name="csrfToken" value="${csrfToken}">
           <label class="block mb-4">
             <span class="text-gray-700">Select a Date:</span>
             <input type="date" name="date" id="date" class="w-full border rounded px-3 py-2 mt-1">

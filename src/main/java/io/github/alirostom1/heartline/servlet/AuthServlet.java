@@ -4,7 +4,11 @@ package io.github.alirostom1.heartline.servlet;
 import io.github.alirostom1.heartline.config.AppContext;
 import io.github.alirostom1.heartline.exception.AuthException;
 import io.github.alirostom1.heartline.exception.RegisterException;
+import io.github.alirostom1.heartline.job.GenerateCreatedSpecialistTimeSlots;
+import io.github.alirostom1.heartline.model.entity.Specialist;
 import io.github.alirostom1.heartline.model.entity.User;
+import io.github.alirostom1.heartline.service.SpecialistService;
+import io.github.alirostom1.heartline.service.TimeSlotService;
 import io.github.alirostom1.heartline.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -17,11 +21,13 @@ import java.io.IOException;
 
 public class AuthServlet extends HttpServlet{
     private UserService userService;
+    private TimeSlotService timeSlotService;
 
     @Override
     public void init() throws ServletException{
         AppContext appContext = (AppContext) getServletContext().getAttribute("appContext");
         this.userService = appContext.getUserService();
+        this.timeSlotService = appContext.getTimeSlotService();
     }
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
@@ -93,6 +99,7 @@ public class AuthServlet extends HttpServlet{
                     break;
                 case "specialist":
                     user = userService.registerSpecialist(fullName,username,email,password);
+                    new Thread(new GenerateCreatedSpecialistTimeSlots(timeSlotService,(Specialist) user)).start();
                     break;
                 default:
                     throw new RegisterException("Invalid role");

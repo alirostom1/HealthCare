@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="consultations")
+@ToString(exclude = {"patient","generalist","medicalActs","request"})
 public class Consultation {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,7 +50,7 @@ public class Consultation {
     public double getTotalCost() {
         double medicalActsCost = medicalActs.stream()
                 .mapToDouble(MedicalAct::getPrice).sum();
-        return this.cost + medicalActsCost;
+        return this.request == null ? this.cost + medicalActsCost : this.cost + medicalActsCost + this.request.getSpecialist().getFee();
     }
     public Long getCountMedicalActs(){
         Long count = medicalActs.stream().count();
@@ -66,6 +68,9 @@ public class Consultation {
 
     @Enumerated(EnumType.STRING)
     private ConsultationStatus status = ConsultationStatus.OPEN;
+
+    @OneToOne(mappedBy = "consultation",cascade = CascadeType.ALL)
+    private Request request;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

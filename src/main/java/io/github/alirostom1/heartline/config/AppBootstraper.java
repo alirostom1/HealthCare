@@ -16,12 +16,14 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Time;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,14 +46,16 @@ public class AppBootstraper implements ServletContextListener{
         SpecialistService specialistService = new SpecialistServiceImpl(specialistRepo);
         TimeSlotRepo timeSlotRepo = new TimeSlotRepoImpl(emf);
         TimeSlotService timeSlotService = new TimeSlotServiceImpl(timeSlotRepo);
-        AppContext appContext = new AppContext(emf,userService,patientService,consultationService,specialistService);
-        ctx.setAttribute("appContext",appContext);
+        RequestRepository requestRepository = new RequestRepositoryImpl(emf);
+        ResponseRepository responseRepository = new ResponseRepositoryImpl(emf);
+        RequestService requestService = new RequestServiceImpl(requestRepository,timeSlotRepo,consultationRepo,responseRepository);
+        AppContext appContext = new AppContext(emf,userService,patientService,consultationService,specialistService,requestService,timeSlotService);
 
+        ctx.setAttribute("appContext",appContext);
 
         GenerateWeeklyTimeSlots job1 = new GenerateWeeklyTimeSlots(timeSlotService,specialistService);
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(job1,0,7, TimeUnit.DAYS);
-
     }
     @Override
     public void contextDestroyed(ServletContextEvent sce){

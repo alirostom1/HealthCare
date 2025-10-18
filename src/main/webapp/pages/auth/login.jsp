@@ -10,7 +10,8 @@
     </c:if>
 
     <form action="${pageContext.request.contextPath}/auth/login" method="POST" class="space-y-4">
-      <input type="text" name="username" placeholder="Username" required
+        <input type="hidden" name="csrfToken" value="${csrfToken}">
+        <input type="text" name="username" placeholder="Username" required
         class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
 
       <input type="password" name="password" placeholder="Password" required

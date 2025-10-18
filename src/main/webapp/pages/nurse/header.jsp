@@ -20,5 +20,6 @@
                 class="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-100 transition">
             Logout
         </button>
+        <input type="hidden" name="csrfToken" value="${csrfToken}">
     </form>
 </nav>

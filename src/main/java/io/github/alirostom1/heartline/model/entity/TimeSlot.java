@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "time_slots")
+@ToString(exclude = {"specialist","request"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class TimeSlot{
@@ -37,8 +39,16 @@ public class TimeSlot{
         return this.endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
+
+    public String getFormattedDate(){
+        return this.startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
     @Enumerated(EnumType.STRING)
     private TSstatus status = TSstatus.AVAILABLE;
+
+    @OneToOne(mappedBy = "timeSlot",cascade = CascadeType.ALL)
+    private SyncRequest request;
 
     public boolean isAvailable(){
         return status == TSstatus.AVAILABLE && startTime.isAfter(LocalDateTime.now());
@@ -49,7 +59,7 @@ public class TimeSlot{
 
     public TimeSlot(Specialist specialist,LocalDateTime startTime,LocalDateTime endTime){
         this.specialist = specialist;
-        this.startTime=startTime;
+        this.startTime = startTime;
         this.endTime = endTime;
     }
 }

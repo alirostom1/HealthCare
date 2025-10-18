@@ -1,12 +1,11 @@
 package io.github.alirostom1.heartline.servlet;
 
 import io.github.alirostom1.heartline.config.AppContext;
-import io.github.alirostom1.heartline.model.entity.Consultation;
-import io.github.alirostom1.heartline.model.entity.Generalist;
-import io.github.alirostom1.heartline.model.entity.Patient;
+import io.github.alirostom1.heartline.model.entity.*;
 import io.github.alirostom1.heartline.model.enums.ConsultationStatus;
-import io.github.alirostom1.heartline.service.ConsultationService;
-import io.github.alirostom1.heartline.service.PatientService;
+import io.github.alirostom1.heartline.model.enums.RequestPrio;
+import io.github.alirostom1.heartline.model.enums.Specialty;
+import io.github.alirostom1.heartline.service.*;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -14,17 +13,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class GeneralistServlet extends HttpServlet {
     private ConsultationService consultationService;
     private PatientService patientService;
+    private SpecialistService specialistService;
+    private RequestService requestService;
+
     @Override
     public void init(){
         AppContext appContext = (AppContext) getServletContext().getAttribute("appContext");
         this.consultationService = appContext.getConsultationService();
         this.patientService = appContext.getPatientService();
+        this.specialistService = appContext.getSpecialistService();
+        this.requestService = appContext.getRequestService();
     }
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
@@ -71,6 +76,15 @@ public class GeneralistServlet extends HttpServlet {
                 break;
             case "/consultation/update-treatment":
                 updateTreatment(request,response);
+                break;
+            case "/request/create":
+                forwardToRequestForm(request,response);
+                break;
+            case "/request/sync":
+                createSyncRequest(request,response);
+                break;
+            case "/request/async":
+                createAsyncRequest(request,response);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -126,7 +140,8 @@ public class GeneralistServlet extends HttpServlet {
     }
     public void showConsultations(HttpServletRequest request,HttpServletResponse response)
             throws IOException,ServletException{
-        request.setAttribute("consultations",consultationService.getAllConsultations());
+        UUID generalistId = ((Generalist) request.getSession().getAttribute("currentUser")).getId();
+        request.setAttribute("consultations",consultationService.getConsultationsGeneralistId(generalistId));
         request.getRequestDispatcher("/pages/generalist/consultations.jsp").forward(request,response);
     }
     public void showConsultation(HttpServletRequest request,HttpServletResponse response,String id)
@@ -139,6 +154,7 @@ public class GeneralistServlet extends HttpServlet {
         }else{
             request.setAttribute("availableMedicalActs",consultationService.getAllAvailableMedicalActs(consultationId));
             request.setAttribute("consultation",optConsultation.get());
+            request.setAttribute("specialties", Specialty.values());
         }
         request.getRequestDispatcher("/pages/generalist/consultation.jsp").forward(request,response);
     }
@@ -219,6 +235,71 @@ public class GeneralistServlet extends HttpServlet {
         }catch (Exception e){
             request.getSession().setAttribute("error","Failed to update consultation treatment");
             response.sendRedirect(request.getContextPath() + "/generalist/consultation/" + consultationId);
+        }
+    }
+    private void forwardToRequestForm(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        Specialty specialty = Specialty.valueOf(request.getParameter("specialty"));
+        List<Specialist> specialists = specialistService.findBySpecialty(specialty);
+        request.setAttribute("specialists",specialists);
+        if(request.getParameter("type").equals("sync")){
+            request.getRequestDispatcher("/pages/generalist/choose-specialist-sync.jsp").forward(request,response);
+        }else{
+            request.getRequestDispatcher("/pages/generalist/choose-specialist-async.jsp").forward(request,response);
+        }
+    }
+    private void createSyncRequest(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        String specialistId = request.getParameter("specialistId");
+        String timeSlotId = request.getParameter("timeSlotId");
+        String consultationId = request.getParameter("consultationId");
+        String url = request.getParameter("meetingUrl");
+
+        Optional<Specialist> optSpecialist = specialistService.findById(UUID.fromString(specialistId));
+        if(optSpecialist.isEmpty()){
+            request.getSession().setAttribute("error","Invalid specialist Selected");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/"+consultationId);
+        }
+        Specialist specialist = optSpecialist.get();
+
+        Optional<TimeSlot> optTimeSlot = specialistService.getTimeSlotById(UUID.fromString(timeSlotId));
+        if(optTimeSlot.isEmpty()){
+            request.getSession().setAttribute("error","Invalid timeslot Selected");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/"+consultationId);
+        }
+        TimeSlot timeSlot = optTimeSlot.get();
+
+        Consultation consultation = consultationService.getConsultationById(UUID.fromString(consultationId)).get();
+        try{
+            requestService.createSyncRequest(consultation,timeSlot,specialist,url);
+            request.getSession().setAttribute("success","Successfully placed request!");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/"+consultationId);
+        }catch (Exception e){
+            request.getSession().setAttribute("error","Failed to save Request!");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/"+consultationId);
+        }
+    }
+    private void createAsyncRequest(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        String specialistId = request.getParameter("specialistId");
+        String consultationId = request.getParameter("consultationId");
+        String priority = request.getParameter("priority");
+        String question = request.getParameter("question");
+        Optional<Specialist> optSpecialist = specialistService.findById(UUID.fromString(specialistId));
+        if(optSpecialist.isEmpty()){
+            request.getSession().setAttribute("error","Invalid specialist Selected");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/"+consultationId);
+        }
+        Specialist specialist = optSpecialist.get();
+        Consultation consultation = consultationService.getConsultationById(UUID.fromString(consultationId)).get();
+        try{
+            requestService.createAsyncRequest(consultation,specialist, RequestPrio.valueOf(priority),question);
+            request.getSession().setAttribute("success","Successfully placed request!");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/"+consultationId);
+        }catch (Exception e){
+            e.printStackTrace();
+            request.getSession().setAttribute("error","Failed to save Request!");
+            response.sendRedirect(request.getContextPath() + "/generalist/consultation/"+consultationId);
         }
     }
 

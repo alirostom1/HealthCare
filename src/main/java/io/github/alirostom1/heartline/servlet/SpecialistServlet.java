@@ -1,13 +1,9 @@
 package io.github.alirostom1.heartline.servlet;
 
 import io.github.alirostom1.heartline.config.AppContext;
-import io.github.alirostom1.heartline.model.entity.Specialist;
-import io.github.alirostom1.heartline.model.entity.TimeSlot;
-import io.github.alirostom1.heartline.model.entity.User;
+import io.github.alirostom1.heartline.model.entity.*;
 import io.github.alirostom1.heartline.model.enums.Specialty;
-import io.github.alirostom1.heartline.service.SpecialistService;
-import io.github.alirostom1.heartline.service.SpecialistServiceImpl;
-import io.github.alirostom1.heartline.service.UserService;
+import io.github.alirostom1.heartline.service.*;
 import io.github.alirostom1.heartline.util.FormUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -24,12 +20,16 @@ import java.util.UUID;
 public class SpecialistServlet extends HttpServlet {
     private UserService userService;
     private SpecialistService specialistService;
+    private RequestService requestService;
+    private ConsultationService consultationService;
 
     @Override
     public void init(){
         AppContext appContext = (AppContext) getServletContext().getAttribute("appContext");
         this.userService = appContext.getUserService();
         this.specialistService = appContext.getSpecialistService();
+        this.requestService = appContext.getRequestService();
+        this.consultationService = appContext.getConsultationService();
     }
 
     @Override
@@ -43,8 +43,16 @@ public class SpecialistServlet extends HttpServlet {
             case "/time-slots":
                 showTimeSlots(request,response);
                 break;
+            case "/requests":
+                showRequests(request,response);
+                break;
             default:
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                if(action.startsWith("/consultation/")){
+                    String id = action.substring(14);
+                    showConsultation(request,response,id);
+                }else {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
                 break;
         }
     }
@@ -55,6 +63,9 @@ public class SpecialistServlet extends HttpServlet {
         switch (action){
             case "/update":
                 updateSpecialist(request,response);
+                break;
+            case "/request/respond":
+                respondRequest(request,response);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -123,6 +134,40 @@ public class SpecialistServlet extends HttpServlet {
         }catch(Exception e){
             request.setAttribute("error",e.getMessage());
             request.getRequestDispatcher("/pages/specialist/time-slots.jsp").forward(request,response);
+        }
+    }
+    private void showRequests(HttpServletRequest request,HttpServletResponse response)
+            throws IOException,ServletException{
+        notificationMessages(request);
+        User user = (User)request.getSession().getAttribute("currentUser");
+        Specialist specialist = (Specialist) userService.findById(user.getId()).get();
+        List<Request> requests = requestService.getRequestsBySpecialist(specialist);
+        request.setAttribute("requests",requests);
+        request.getRequestDispatcher("/pages/specialist/requests.jsp").forward(request,response);
+    }
+    private void respondRequest(HttpServletRequest request,HttpServletResponse response)
+        throws IOException{
+        String requestId = request.getParameter("requestId");
+        String answer = request.getParameter("answer");
+        try {
+            requestService.respondToRequest(UUID.fromString(requestId), answer);
+            request.getSession().setAttribute("success", "Successfully responded to the request!");
+            response.sendRedirect(request.getContextPath() + "/specialist/requests");
+        }catch(Exception e){
+            request.getSession().setAttribute("error", "Failed to respond to the request:");
+            response.sendRedirect(request.getContextPath() + "/specialist/requests");
+        }
+    }
+    private void showConsultation(HttpServletRequest request,HttpServletResponse response,String id)
+            throws IOException,ServletException{
+        try{
+            UUID consultationId = UUID.fromString(id);
+            Consultation consultation = consultationService.getConsultationById(consultationId).orElseThrow();
+            request.setAttribute("consultation",consultation);
+            request.getRequestDispatcher("/pages/specialist/show-consultation.jsp").forward(request,response);
+        }catch(Exception e){
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 }

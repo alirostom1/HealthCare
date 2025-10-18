@@ -20,6 +20,7 @@
                             <span class="text-gray-500 text-sm ml-2">${q.patient.ssn}</span>
                         </div>
                         <form action="${pageContext.request.contextPath}/nurse/queue/remove" method="POST" class="inline">
+                            <input type="hidden" name="csrfToken" value="${csrfToken}">
                             <input type="hidden" name="patientId" value="${q.patient.id}">
                             <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
                                 Remove

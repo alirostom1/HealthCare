@@ -21,6 +21,7 @@
                         </div>
                         <form action="${pageContext.request.contextPath}/generalist/consultation/create" method="GET" class="inline">
                             <input type="hidden" name="patientId" value="${q.patient.id}">
+                            <input type="hidden" name="csrfToken" value="${csrfToken}">
                             <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
                                 Create Consultation
                             </button>

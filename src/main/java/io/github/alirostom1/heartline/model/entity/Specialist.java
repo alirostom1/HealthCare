@@ -15,7 +15,7 @@ import java.util.UUID;
 @Table(name = "specialists")
 @DiscriminatorValue("specialist")
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = true,exclude = {"timeSlots","requests"})
 @AllArgsConstructor
 public class Specialist extends User{
 
@@ -29,6 +29,9 @@ public class Specialist extends User{
     @OneToMany(mappedBy = "specialist",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @OrderBy("startTime desc")
     private List<TimeSlot> timeSlots = new ArrayList<>();
+
+    @OneToMany(mappedBy = "specialist",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Request> requests;
 
     public Specialist(){
         setRole(ERole.SPECIALIST);
